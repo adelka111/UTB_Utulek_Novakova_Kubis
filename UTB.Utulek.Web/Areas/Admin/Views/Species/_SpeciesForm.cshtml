@@ -1,0 +1,8 @@
+﻿@model Species
+@* Společná pole formuláře pro Create a Edit. *@
+
+<div class="mb-3">
+    <label asp-for="Name" class="form-label">Název</label>
+    <input asp-for="Name" class="form-control" />
+    <span asp-validation-for="Name" class="text-danger"></span>
+</div>

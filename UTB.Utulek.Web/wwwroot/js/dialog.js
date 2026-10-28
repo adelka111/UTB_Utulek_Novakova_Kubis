@@ -1,5 +1,6 @@
 // Potvrzovací dialog pro smazání (Bootstrap modal uprostřed stránky).
 // Použití ve formuláři: <form ... onsubmit="return confirmDelete(this)" data-name="Rex">
+// Volitelně data-title="Smazat druh?" změní nadpis dialogu (výchozí "Smazat zvíře?").
 // Funkce vrací false, aby se formulář hned neodeslal; odešle se až po kliknutí na "Smazat".
 let deleteDialog = null;
 let formToSubmit = null;
@@ -10,6 +11,7 @@ function confirmDelete(form) {
     }
 
     formToSubmit = form;
+    deleteDialog.element.querySelector('.js-dialog-title').textContent = form.dataset.title || 'Smazat zvíře?';
     deleteDialog.element.querySelector('.js-dialog-item-name').textContent = form.dataset.name || 'tuto položku';
     deleteDialog.modal.show();
 
@@ -32,7 +34,7 @@ function createDeleteDialog() {
                             <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
                         </svg>
                     </div>
-                    <h2 class="h4 mb-2" id="delete-dialog-title">Smazat zvíře?</h2>
+                    <h2 class="h4 mb-2 js-dialog-title" id="delete-dialog-title"></h2>
                     <p class="text-body-secondary mb-0">
                         Opravdu si přejete smazat <strong class="js-dialog-item-name text-body"></strong>?<br />
                         Tuto akci nelze vrátit zpět.

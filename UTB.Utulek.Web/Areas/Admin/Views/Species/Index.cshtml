@@ -1,0 +1,52 @@
+﻿@model IList<Species>
+@using UTB.Utulek.Domain.Entities
+@{
+    ViewData["Title"] = "Správa druhů";
+}
+<h1>@ViewData["Title"]</h1>
+
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+@if (Model != null && Model.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">@nameof(Species.Name)</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                Species species = Model[i];
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@species.Name</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@species.Id" class="btn btn-sm btn-info">Detail</a>
+                        <a asp-action="Edit" asp-route-id="@species.Id" class="btn btn-sm btn-primary">Upravit</a>
+                        <form asp-action="Delete" asp-route-id="@species.Id" method="post" class="d-inline"
+                              onsubmit="return confirmDelete(this)" data-name="@species.Name" data-title="Smazat druh?">
+                            <button type="submit" class="btn btn-sm btn-danger">Smazat</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Žádné druhy nejsou v databázi.</p>
+}
+
+<a asp-action="Create" class="btn btn-success">Přidat druh</a>
+
+@section Scripts {
+    <script src="~/js/dialog.js" asp-append-version="true"></script>
+}

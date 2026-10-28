@@ -1,8 +1,56 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IList<UTB.Utulek.Domain.Entities.Animal>
+@using UTB.Utulek.Domain.Entities
+@{
+    ViewData["Title"] = "Zvířata k adopci";
+    const int ShortDescriptionLength = 120;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mb-4">
+    <h1 class="display-5">@ViewData["Title"]</h1>
+    <p class="text-body-secondary">Tato zvířata u nás čekají na nový domov.</p>
 </div>
+
+@if (Model != null && Model.Count > 0)
+{
+    @* Na mobilu 1 karta na řádek, od sm 2, od lg 3. *@
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+        @foreach (Animal animal in Model)
+        {
+            string? description = animal.Description;
+            if (description != null && description.Length > ShortDescriptionLength)
+            {
+                description = description.Substring(0, ShortDescriptionLength).TrimEnd() + "…";
+            }
+
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    @if (!string.IsNullOrEmpty(animal.ImageFileName))
+                    {
+                        <img src="@animal.ImageFileName" class="card-img-top animal-card-img" alt="@animal.Name" />
+                    }
+                    else
+                    {
+                        <div class="card-img-top animal-card-img animal-card-placeholder" role="img" aria-label="Bez fotografie">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+                                <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                                <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1z"/>
+                            </svg>
+                        </div>
+                    }
+                    <div class="card-body">
+                        <h2 class="card-title h5 mb-1">@animal.Name</h2>
+                        <p class="card-subtitle text-body-secondary mb-2">@(animal.Species?.Name ?? animal.OtherSpeciesName)</p>
+                        @if (!string.IsNullOrWhiteSpace(description))
+                        {
+                            <p class="card-text">@description</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p class="text-center">Momentálně nemáme žádná zvířata k adopci.</p>
+}

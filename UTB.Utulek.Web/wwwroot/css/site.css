@@ -40,3 +40,17 @@ body {
   color: var(--bs-danger);
   background-color: var(--bs-danger-bg-subtle);
 }
+
+/* Karty zvířat na úvodní stránce (Views/Home/Index.cshtml) */
+.animal-card-img {
+  height: 200px;
+  object-fit: cover;
+}
+
+.animal-card-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--bs-secondary-color);
+  background-color: var(--bs-secondary-bg);
+}

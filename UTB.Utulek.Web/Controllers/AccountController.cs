@@ -96,6 +96,8 @@ public class AccountController : Controller
 
     public IActionResult AccessDenied()
     {
+        // Přihlášený uživatel bez potřebné role -> 403 Forbidden se srozumitelnou stránkou.
+        Response.StatusCode = StatusCodes.Status403Forbidden;
         return View();
     }
 }

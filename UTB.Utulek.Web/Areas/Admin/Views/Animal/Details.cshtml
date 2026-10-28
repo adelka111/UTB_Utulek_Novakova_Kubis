@@ -15,6 +15,10 @@
 <div class="row">
     <div class="col-md-8 col-lg-6">
         <div class="card shadow-sm mb-3">
+            @if (!string.IsNullOrEmpty(Model.ImageFileName))
+            {
+                <img src="@Model.ImageFileName" class="card-img-top animal-detail-img" alt="@Model.Name" />
+            }
             <div class="card-body">
                 <h2 class="card-title h3">@Model.Name</h2>
 
@@ -36,6 +40,19 @@
                 </dl>
             </div>
         </div>
+
+        <form asp-action="UploadImage" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data" class="mb-3">
+            <label for="imageFile" class="form-label">@(string.IsNullOrEmpty(Model.ImageFileName) ? "Přidat fotku" : "Vyměnit fotku")</label>
+            <div class="input-group">
+                <input type="file" id="imageFile" name="imageFile" class="form-control" accept=".jpg,.jpeg,.png,.gif,.webp" required />
+                <button type="submit" class="btn btn-outline-primary">Nahrát</button>
+            </div>
+            <div class="form-text">JPG, PNG, GIF nebo WEBP, nejvýše 5 MB.</div>
+            @if (TempData["ImageError"] is string imageError)
+            {
+                <div class="text-danger">@imageError</div>
+            }
+        </form>
 
         <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Upravit</a>
         <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline"

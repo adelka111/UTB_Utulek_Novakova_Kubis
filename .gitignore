@@ -483,3 +483,6 @@ $RECYCLE.BIN/
 
 # Lokální konfigurace s hesly (connection string k MySQL)
 appsettings.Development.json
+
+# Fotky zvířat nahrané přes administraci
+UTB.Utulek.Web/wwwroot/img/animals/

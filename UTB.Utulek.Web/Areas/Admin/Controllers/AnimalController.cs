@@ -14,9 +14,11 @@ public class AnimalController : Controller
     private const int OtherSpeciesId = -1;
 
     IAnimalAppService _animalAppService;
-    public AnimalController(IAnimalAppService animalAppService)
+    IImageStorage _imageStorage;
+    public AnimalController(IAnimalAppService animalAppService, IImageStorage imageStorage)
     {
         _animalAppService = animalAppService;
+        _imageStorage = imageStorage;
     }
 
     public IActionResult Index()
@@ -44,14 +46,16 @@ public class AnimalController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Create(Animal animal)
+    public IActionResult Create(Animal animal, IFormFile? imageFile)
     {
         ValidateSpecies(animal);
+        ValidateImage(imageFile);
 
         if (ModelState.IsValid)
         {
             NormalizeSpecies(animal);
             _animalAppService.Create(animal);
+            SaveImage(animal.Id, imageFile);
             return RedirectToAction(nameof(Index));
         }
 
@@ -80,7 +84,7 @@ public class AnimalController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Edit(int id, Animal animal)
+    public IActionResult Edit(int id, Animal animal, IFormFile? imageFile)
     {
         if (id != animal.Id)
         {
@@ -88,6 +92,7 @@ public class AnimalController : Controller
         }
 
         ValidateSpecies(animal);
+        ValidateImage(imageFile);
 
         if (ModelState.IsValid)
         {
@@ -97,11 +102,42 @@ public class AnimalController : Controller
             {
                 return NotFound();
             }
+            SaveImage(animal.Id, imageFile);
             return RedirectToAction(nameof(Index));
         }
 
+        // Při chybě validace se formulář vrací bez fotky z DB -> doplníme ji kvůli náhledu.
+        animal.ImageFileName = _animalAppService.GetById(id)?.ImageFileName;
         LoadSpecies();
         return View(animal);
+    }
+
+    // Nahrání nebo výměna fotky přímo z detailu zvířete.
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult UploadImage(int id, IFormFile? imageFile)
+    {
+        if (imageFile == null)
+        {
+            TempData["ImageError"] = "Vyberte fotku, kterou chcete nahrát.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        string? error = _imageStorage.Validate(imageFile.FileName, imageFile.Length);
+        if (error != null)
+        {
+            TempData["ImageError"] = error;
+            return RedirectToAction(nameof(Details), new { id });
+        }
+
+        using (Stream stream = imageFile.OpenReadStream())
+        {
+            if (!_animalAppService.UpdateImage(id, stream, imageFile.FileName))
+            {
+                return NotFound();
+            }
+        }
+        return RedirectToAction(nameof(Details), new { id });
     }
 
     [HttpPost]
@@ -114,6 +150,34 @@ public class AnimalController : Controller
             return RedirectToAction(nameof(Index));
         }
         return NotFound();
+    }
+
+    private void ValidateImage(IFormFile? imageFile)
+    {
+        // Fotka je nepovinná, kontroluje se jen když ji uživatel vybral.
+        if (imageFile == null)
+        {
+            return;
+        }
+
+        string? error = _imageStorage.Validate(imageFile.FileName, imageFile.Length);
+        if (error != null)
+        {
+            ModelState.AddModelError("imageFile", error);
+        }
+    }
+
+    private void SaveImage(int animalId, IFormFile? imageFile)
+    {
+        if (imageFile == null)
+        {
+            return;
+        }
+
+        using (Stream stream = imageFile.OpenReadStream())
+        {
+            _animalAppService.UpdateImage(animalId, stream, imageFile.FileName);
+        }
     }
 
     private void ValidateSpecies(Animal animal)

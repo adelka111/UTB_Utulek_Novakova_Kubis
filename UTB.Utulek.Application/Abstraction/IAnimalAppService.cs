@@ -9,5 +9,6 @@ public interface IAnimalAppService
     Animal? GetById(int id);
     void Create(Animal animal);
     bool Update(Animal animal);
+    bool UpdateImage(int id, Stream content, string fileName);
     bool Delete(int id);
 }

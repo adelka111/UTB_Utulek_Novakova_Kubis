@@ -25,6 +25,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
 builder.Services.AddScoped<ISpeciesRepository, SpeciesRepository>();
 
+builder.Services.AddSingleton<IImageStorage>(new ImageStorage(builder.Environment.WebRootPath));
 builder.Services.AddScoped<IAnimalAppService, AnimalAppService>();
 builder.Services.AddScoped<ISpeciesAppService, SpeciesAppService>();
 
@@ -45,6 +46,8 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+// Fotky nahrané za běhu (wwwroot/img/animals) MapStaticAssets nezná, ty obslouží UseStaticFiles.
+app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();

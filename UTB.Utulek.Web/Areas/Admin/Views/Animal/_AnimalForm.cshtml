@@ -47,3 +47,19 @@
     <textarea asp-for="Description" class="form-control" rows="4"></textarea>
     <span asp-validation-for="Description" class="text-danger"></span>
 </div>
+
+<div class="mb-3">
+    <label for="imageFile" class="form-label">Fotka</label>
+    @if (!string.IsNullOrEmpty(Model.ImageFileName))
+    {
+        <div class="mb-2">
+            <img src="@Model.ImageFileName" alt="@Model.Name" class="img-thumbnail animal-form-img" />
+        </div>
+    }
+    <input type="file" id="imageFile" name="imageFile" class="form-control" accept=".jpg,.jpeg,.png,.gif,.webp" />
+    <div class="form-text">
+        @(string.IsNullOrEmpty(Model.ImageFileName) ? "Nepovinné." : "Vyberte novou fotku, jen pokud chcete tu současnou vyměnit.")
+        JPG, PNG, GIF nebo WEBP, nejvýše 5 MB.
+    </div>
+    @Html.ValidationMessage("imageFile", new { @class = "text-danger" })
+</div>

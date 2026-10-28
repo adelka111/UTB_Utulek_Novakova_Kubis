@@ -54,3 +54,13 @@ body {
   color: var(--bs-secondary-color);
   background-color: var(--bs-secondary-bg);
 }
+
+/* Fotka zvířete v administraci (detail a formulář) */
+.animal-detail-img {
+  max-height: 320px;
+  object-fit: cover;
+}
+
+.animal-form-img {
+  max-height: 160px;
+}

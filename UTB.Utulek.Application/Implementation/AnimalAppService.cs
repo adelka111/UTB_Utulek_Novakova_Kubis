@@ -8,11 +8,13 @@ public class AnimalAppService : IAnimalAppService
 {
     private readonly IAnimalRepository _animalRepository;
     private readonly ISpeciesRepository _speciesRepository;
+    private readonly IImageStorage _imageStorage;
 
-    public AnimalAppService(IAnimalRepository animalRepository, ISpeciesRepository speciesRepository)
+    public AnimalAppService(IAnimalRepository animalRepository, ISpeciesRepository speciesRepository, IImageStorage imageStorage)
     {
         _animalRepository = animalRepository;
         _speciesRepository = speciesRepository;
+        _imageStorage = imageStorage;
     }
 
     public IList<Animal> SelectAll()
@@ -56,6 +58,23 @@ public class AnimalAppService : IAnimalAppService
         return true;
     }
 
+    public bool UpdateImage(int id, Stream content, string fileName)
+    {
+        Animal? existing = _animalRepository.GetById(id);
+        if (existing == null)
+        {
+            return false;
+        }
+
+        string? oldImage = existing.ImageFileName;
+        existing.ImageFileName = _imageStorage.Save(content, fileName);
+        _animalRepository.Edit(existing);
+
+        // Starou fotku smažeme až po úspěšném uložení nové.
+        _imageStorage.Delete(oldImage);
+        return true;
+    }
+
     public bool Delete(int id)
     {
         Animal? animal = _animalRepository.GetById(id);
@@ -65,6 +84,7 @@ public class AnimalAppService : IAnimalAppService
         }
 
         _animalRepository.Delete(animal);
+        _imageStorage.Delete(animal.ImageFileName);
         return true;
     }
 }

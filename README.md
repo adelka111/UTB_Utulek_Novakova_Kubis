@@ -42,7 +42,7 @@ Kontrolery používají jen služby z Application, nikdy přímo DbContext nebo 
 | Manager | správa zvířat a druhů |
 | Zakaznik | prohlížení zvířat (každý nově registrovaný uživatel) |
 
-Výchozí administrátor: `admin@utulek.cz` / `Admin123!` *(změň podle toho, co nastavíš v seedu)*
+Výchozí administrátor: `admin@utulek.cz` / `Admin123!`
 
 ## Co je hotové
 

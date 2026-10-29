@@ -31,7 +31,7 @@ builder.Services.AddScoped<ISpeciesAppService, SpeciesAppService>();
 
 var app = builder.Build();
 
-// Automatické použití migrací a seed rolí Admin, Manager, Zakaznik.
+// Automatické použití migrací, seed rolí Admin, Manager, Zakaznik a výchozího administrátora.
 using (var scope = app.Services.CreateScope())
 {
     await DatabaseInitializer.InitializeAsync(scope.ServiceProvider);

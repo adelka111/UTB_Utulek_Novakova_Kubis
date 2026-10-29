@@ -6,7 +6,7 @@ namespace UTB.Utulek.Infrastructure.Database;
 
 public static class DatabaseInitializer
 {
-    // Při startu aplikace použije všechny čekající migrace a pak naseeduje role.
+    // Při startu aplikace použije všechny čekající migrace a pak naseeduje role a výchozího administrátora.
     // Migrace tak není potřeba pouštět ručně (Update-Database).
     public static async Task InitializeAsync(IServiceProvider services)
     {
@@ -14,5 +14,6 @@ public static class DatabaseInitializer
         await dbContext.Database.MigrateAsync();
 
         await RoleSeeder.SeedRolesAsync(services);
+        await RoleSeeder.SeedAdminAsync(services);
     }
 }
